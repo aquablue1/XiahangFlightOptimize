@@ -1,4 +1,4 @@
-from src.commonDirectory import commonDirectory as D
+from src.CommonDirectory import commonDirectory as D
 
 class planeJobLine:
     def __init__(self, planeID):

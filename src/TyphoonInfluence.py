@@ -1,5 +1,5 @@
 from src.TimePeriod import timePeriod
-from src.commonDirectory import commonDirectory as D
+from src.CommonDirectory import commonDirectory as D
 
 
 class typhoonForbiddenRule:

@@ -1,6 +1,7 @@
 from src.AirLine import airLine
 from src.TimePeriod import timePeriod
-from src.commonDirectory import commonDirectory as D
+from src.CommonDirectory import commonDirectory as D
+from src.CommonParameter import commonParameter as cpara
 
 
 class connectingFlight:
@@ -20,12 +21,12 @@ class connectingFlight:
         self.FlightType = firLine.LineType + secLine.LineType - firLine.LineType * secLine.LineType
         # mark 1 if one of the flight is international else 0
         try:
-            self.FlightFlyPeriod = timePeriod(firLine.LineFlyPeriod.start.strftime('%Y/%m/%d %H:%M'),
+            self.FlightFlyPeriod = timePeriod(firLine.LineFlyPeriod.start.strftime(cpara.DATETIME_FORM),
                                               (firLine.LineFlyPeriod.start+D.flight_timecost(
                                                   D.planeID_totype(self.FlightID),
                                                   self.FlightDeparture,
                                                   self.FlightLand
-                                              )).strftime('%Y/%m/%d %H:%M'))
+                                              )).strftime(cpara.DATETIME_FORM))
         except TypeError as e:
             print("LineFlyPeriod not found", self.FlightID, self.FlightDeparture, self.FlightLand)
             print(e)
@@ -37,15 +38,15 @@ class connectingFlight:
     def flight_straighten(self):
         newLine = []
         newLine.append(D.get_cur_newlineID())
-        newLine.append(self.FlightDate.strftime('%Y/%m/%d'))
+        newLine.append(self.FlightDate.strftime(cpara.DATE_FORM))
         if self.FlightType == 1:
             raise ValueError("illegal to connecting an international airline")
         newLine.append(D.dict_NumToNationality[self.FlightType])
         newLine.append(self.FlightID)
         newLine.append(self.FlightDeparture)
         newLine.append(self.FlightLand)
-        newLine.append(self.FlightFlyPeriod.start.strftime('%Y/%m/%d %H:%M'))
-        newLine.append(self.FlightFlyPeriod.end.strftime('%Y/%m/%d %H:%M'))
+        newLine.append(self.FlightFlyPeriod.start.strftime(cpara.DATETIME_FORM))
+        newLine.append(self.FlightFlyPeriod.end.strftime(cpara.DATETIME_FORM))
         newLine.append(self.FlightPlaneID)
         newLine.append(D.planeID_totype(self.FlightPlaneID))
         newLine.append(self.FlightIF)

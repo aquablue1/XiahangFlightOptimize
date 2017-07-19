@@ -1,9 +1,10 @@
 from datetime import datetime
+from src.CommonParameter import commonParameter as cpara
 
 class timePeriod:
     def __init__(self, start, end):
-        self.start = datetime.strptime(start, '%Y/%m/%d %H:%M')
-        self.end = datetime.strptime(end, '%Y/%m/%d %H:%M')
+        self.start = datetime.strptime(start, cpara.DATETIME_FORM)
+        self.end = datetime.strptime(end, cpara.DATETIME_FORM)
         self.time_cost = self.end - self.start
 
     @staticmethod

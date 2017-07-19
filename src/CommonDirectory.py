@@ -3,9 +3,11 @@ from datetime import datetime
 from datetime import timedelta
 
 from src.TimePeriod import timePeriod
+from src.CommonParameter import commonParameter as cpara
 
 
 class commonDirectory:
+
     dict_NationalityToNum = {'国内':0, '国际':1}
 
     # dict_PlaneIDToType = {}
@@ -58,10 +60,10 @@ class commonDirectory:
 
 if __name__ == '__main__':
     print(commonDirectory.flight_timecost(3, 49, 5))
-    start = datetime.strptime("2017/05/05 15:25", '%Y/%m/%d %H:%M')
+    start = datetime.strptime("05/05/2017 15:25", cpara.DATETIME_FORM)
     end = start + timedelta(minutes= 70)
     print((end - start).__class__)
-    print(timePeriod(start.strftime('%Y/%m/%d %H:%M'), (end+timedelta(minutes=50)).strftime('%Y/%m/%d %H:%M')))
+    print(timePeriod(start.strftime(cpara.DATETIME_FORM), (end+timedelta(minutes=50)).strftime(cpara.DATETIME_FORM)))
 
 
 
