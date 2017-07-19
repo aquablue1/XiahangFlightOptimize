@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from src.CommonDirectory import commonDirectory as D
 from src.CommonParameter import commonParameter as cpara
 from src.TimePeriod import timePeriod
@@ -18,7 +18,7 @@ class airLine:
         self.LineFlyPeriod = timePeriod(line_info[6], line_info[7])  # departure and land time.
         self.LinePlaneID = int(line_info[8])
         # self.LinePlaneType = line_info[9]  #igore the plane type
-        self.LineIF = int(line_info[10])  # IF: influence factor
+        self.LineIF = float(line_info[10])  # IF: influence factor
 
 
     def reconstruct_list(self):
@@ -48,5 +48,5 @@ if __name__ == '__main__':
         airlineSet = []
         for row in data:
             airlineSet.append(airLine(row))
-        print(airlineSet[1].LineID)
+        print(airlineSet[1].LineDate.date())
 

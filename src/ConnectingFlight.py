@@ -50,4 +50,6 @@ class connectingFlight:
         newLine.append(self.FlightPlaneID)
         newLine.append(D.planeID_totype(self.FlightPlaneID))
         newLine.append(self.FlightIF)
-        return newLine
+        return airLine(newLine)
+
+
