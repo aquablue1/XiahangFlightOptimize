@@ -1,10 +1,10 @@
 from src.TimePeriod import timePeriod
-from src.commonDirectory import *
+from src.commonDirectory import commonDirectory as D
 
 
 class typhoonForbiddenRule:
     def __init__(self, rule):
-        self.ForbiddenRuleType = dict_InfluenceToNum[rule[2]]
+        self.ForbiddenRuleType = D.dict_InfluenceToNum[rule[2]]
         self.ForbiddenRuleTimePeriod = timePeriod(rule[0], rule[1])
 
 

@@ -1,11 +1,10 @@
-from src.commonDirectory import *
+from src.commonDirectory import commonDirectory as D
 
 class planeJobLine:
     def __init__(self, planeID):
         self.planeID = planeID
-        self.planeType = dict_PlaneIDToType[planeID]
+        self.planeType = D.planeID_totype(planeID)
         self.planeFlightList = []
-
 
     def insert_airline(self, newAirline):
         """

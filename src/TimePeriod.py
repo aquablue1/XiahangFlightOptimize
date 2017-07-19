@@ -4,6 +4,7 @@ class timePeriod:
     def __init__(self, start, end):
         self.start = datetime.strptime(start, '%Y/%m/%d %H:%M')
         self.end = datetime.strptime(end, '%Y/%m/%d %H:%M')
+        self.time_cost = self.end - self.start
 
     @staticmethod
     def is_intersect(timeperiod1, timeperiod2):
@@ -15,7 +16,7 @@ class timePeriod:
     def move_ahead(self, time_gap):
         """
         positive time_gap value means move time forword
-        :param time_gap: datetime type, mark the gap we want to move
+        :param time_gap: datedelta type, mark the gap we want to move
         :return:  None
         """
         self.start += time_gap
