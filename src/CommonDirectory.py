@@ -22,11 +22,11 @@ class commonDirectory:
 
     @staticmethod
     def planeID_totype(planeID):
-        with open("../Secenrio/Xiahang_Airline.csv", encoding="gbk") as f:
+        with open("../Scenario/Xiahang_Airline.csv", encoding="gbk") as f:
             data = csv.reader(f)
             head = next(data)
             for row in data:
-                if row[8] == planeID:
+                if row[8] == str(planeID):
                     return row[9]
         raise ValueError("plane ID connot be found in Xiahang_Airline.csv")
 

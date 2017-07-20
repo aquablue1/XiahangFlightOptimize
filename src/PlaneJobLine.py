@@ -1,4 +1,6 @@
 from src.CommonDirectory import commonDirectory as D
+from src.AirLine import airLine
+import csv
 
 class planeJobLine:
     def __init__(self, planeID):
@@ -12,7 +14,7 @@ class planeJobLine:
         :param newAirline: airLine 
         :return: None
         """
-        if self.planeID != newAirline.LinePlandID:
+        if self.planeID != newAirline.LinePlaneID:
             raise ValueError("New airline doesn't belong to target plane job line.")
         if self.planeFlightList == []:
             self.planeFlightList.append(newAirline)
@@ -35,3 +37,16 @@ class planeJobLine:
             if cur.LineLandAirport != next.LineDepartureAirport:
                 return False
         return True
+
+
+if __name__ == '__main__':
+    with open("../Scenario/Xiahang_Airline.csv") as f:
+        data = csv.reader(f)
+        head = next(data)
+        airlineSet = []
+        plane1Set = planeJobLine(90)
+        for row in data:
+            if row[8] == '90':
+                plane1Set.insert_airline(airLine(row))
+        for line in plane1Set.planeFlightList:
+            print(line.LineFlyPeriod)
