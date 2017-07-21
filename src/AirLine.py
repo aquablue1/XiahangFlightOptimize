@@ -16,10 +16,13 @@ class airLine:
         self.LineDepartureAirport = int(line_info[4])
         self.LineLandAirport = int(line_info[5])
         self.LineFlyPeriod = timePeriod(line_info[6], line_info[7])  # departure and land time.
-        self.LinePlaneID = int(line_info[8])
+        self.LinePlaneID = str(line_info[8])
         # self.LinePlaneType = line_info[9]  #igore the plane type
         self.LineIF = float(line_info[10])  # IF: influence factor
 
+    def __str__(self):
+        output = "AirlineID: " + str(self.LineID) + ", time: " + str(self.LineFlyPeriod)
+        return output
 
     def reconstruct_list(self):
         """
@@ -41,6 +44,16 @@ class airLine:
         return rtl
 
 
+def form_airlines():
+    with open(cpara.PATH_AIRLINE) as f:
+        data = csv.reader(f)
+        head = next(data)
+        airlineSet = []
+        for row in data:
+            airlineSet.append(airLine(row))
+        return head, airlineSet
+
+
 if __name__ == '__main__':
     with open("../Scenario/Xiahang_Airline.csv") as f:
         data = csv.reader(f)
@@ -49,4 +62,5 @@ if __name__ == '__main__':
         for row in data:
             airlineSet.append(airLine(row))
         print(airlineSet[1].LineDate.date())
+        print(airlineSet[0].LineIF)
 

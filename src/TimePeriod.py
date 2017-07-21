@@ -14,7 +14,7 @@ class timePeriod:
         return return_str
 
     @staticmethod
-    def is_intersect(timeperiod1, timeperiod2):
+    def is_time_intersect(timeperiod1, timeperiod2):
         if timeperiod1.end < timeperiod2.start or timeperiod2.end < timeperiod1.start:
             return False
         else:

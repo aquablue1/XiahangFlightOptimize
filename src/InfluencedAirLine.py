@@ -4,6 +4,7 @@ import csv
 class influncedAirLine(airLine):
     def __init__(self, line_info):
         super(influncedAirLine, self).__init__(line_info)
+        print("..a")
 
 
     def printTestInfo(self):
@@ -23,3 +24,4 @@ if __name__ == '__main__':
     test_airline.__class__ = influncedAirLine
     print(test_airline.__class__)
     test_airline.printTestInfo()
+    print(test_airline.LineFlyPeriod)
