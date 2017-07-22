@@ -8,6 +8,11 @@ class planeJobLine:
         self.planeType = D.planeID_totype(planeID)
         self.planeFlightList = []
 
+    def __str__(self):
+        output = "planeID: "+self.planeID
+        return output
+
+
     def insert_airline(self, newAirline):
         """
         Insert a new airline based on the time sequence

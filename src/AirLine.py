@@ -13,15 +13,17 @@ class airLine:
         self.LineDate = datetime.strptime(line_info[1], cpara.DATE_FORM)
         self.LineType = D.dict_NationalityToNum[line_info[2]]
         self.LineNum = int(line_info[3])
-        self.LineDepartureAirport = int(line_info[4])
-        self.LineLandAirport = int(line_info[5])
+        self.LineDepartureAirport = str(line_info[4])
+        self.LineLandAirport = str(line_info[5])
         self.LineFlyPeriod = timePeriod(line_info[6], line_info[7])  # departure and land time.
         self.LinePlaneID = str(line_info[8])
         # self.LinePlaneType = line_info[9]  #igore the plane type
         self.LineIF = float(line_info[10])  # IF: influence factor
+        self.LineIsInfluenced = 0
 
     def __str__(self):
-        output = "AirlineID: " + str(self.LineID) + ", time: " + str(self.LineFlyPeriod)
+        output = "AirlineID: " + str(self.LineID) + ", time: " + str(self.LineFlyPeriod) + \
+        ". from "+self.LineDepartureAirport+" to "+self.LineLandAirport+"."
         return output
 
     def reconstruct_list(self):
