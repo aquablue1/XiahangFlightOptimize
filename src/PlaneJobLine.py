@@ -7,6 +7,7 @@ class planeJobLine:
         self.planeID = planeID
         self.planeType = D.planeID_totype(planeID)
         self.planeFlightList = []
+        self.planeInfluencedRange = None
 
     def __str__(self):
         output = "planeID: "+self.planeID

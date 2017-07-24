@@ -31,8 +31,6 @@ class typhoonInfluence:
             self.TyphoonForbiddenStop = forbiddenRule
 
 
-
-
 def form_typhoon_accidents():
     influencdeAirportIDSet = []
     with open(cpara.PATH_TYPHOON, encoding="gbk") as f:
