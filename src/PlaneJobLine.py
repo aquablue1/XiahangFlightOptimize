@@ -43,6 +43,12 @@ class planeJobLine:
                 return False
         return True
 
+    def show_planejobline_detail(self):
+        print("plane id: ", self.planeID, end=', ')
+        print("plane type: ", self.planeType)
+        for line in self.planeFlightList:
+            print(line)
+
 
 if __name__ == '__main__':
     with open("../Scenario/Xiahang_Airline.csv") as f:

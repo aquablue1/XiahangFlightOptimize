@@ -9,6 +9,7 @@ from datetime import datetime
 import csv
 
 
+
 if __name__ == '__main__':
     airline_head, airline_set = form_airlines()
     typhoon_head, typhoon_set = form_typhoon_accidents()
@@ -22,7 +23,7 @@ if __name__ == '__main__':
                 and (airline.LineDepartureAirport in [typhoon.TyphoonAirportID for typhoon in typhoon_set]
                      or airline.LineLandAirport in [typhoon.TyphoonAirportID for typhoon in typhoon_set]):
             influenced_airline_set.append(airline)
-            airline.LineIsInfluenced=1
+            airline.LineIsInfluenced = 1
             influenced_flight_set.append(airline.LinePlaneID)
     influenced_flight_set = list(set(influenced_flight_set))
     print(len([line for line in airline_set if line.LineIsInfluenced==1]), '\n ----')
@@ -94,5 +95,4 @@ if __name__ == '__main__':
             start += 1
             f_csv.writerow(row)
 
-    plane_jobline_dict["70"].show_planejobline_detail()
-
+    plane_jobline_dict["111"].show_planejobline_detail()
