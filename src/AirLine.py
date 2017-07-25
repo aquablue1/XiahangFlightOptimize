@@ -12,6 +12,7 @@ class airLine:
         self.LineID = int(line_info[0])
         self.LineDate = datetime.strptime(line_info[1], cpara.DATE_FORM)
         self.LineType = D.dict_NationalityToNum[line_info[2]]
+        self.LineTypeDetail = [1,1]
         self.LineNum = int(line_info[3])
         self.LineDepartureAirport = str(line_info[4])
         self.LineLandAirport = str(line_info[5])
@@ -45,6 +46,24 @@ class airLine:
         rtl.append(self.LineIF)
         return rtl
 
+def form_airportInfoDetail(airlineSet):
+    local_airport_set = []
+    international_airport_set = []
+    airport_set = list(set([line.LineDepartureAirport for line in airlineSet]))
+    airport_set_back = list(set([line.LineLandAirport for line in airlineSet]))
+    airport_set = list(set(airport_set + airport_set_back))
+    for line in airlineSet:
+        if line.LineType == 0:
+            local_airport_set.append(line.LineDepartureAirport)
+            local_airport_set.append(line.LineLandAirport)
+    local_airport_set = list(set(local_airport_set))
+    # international_airport_set = list(set(airport_set) - set(local_airport_set))
+    for line in airlineSet:
+        if line.LineDepartureAirport in local_airport_set:
+            line.LineTypeDetail[0] = 0
+        if line.LineLandAirport in local_airport_set:
+            line.LineTypeDetail[1] = 0
+
 
 def form_airlines():
     with open(cpara.PATH_AIRLINE) as f:
@@ -53,6 +72,7 @@ def form_airlines():
         airlineSet = []
         for row in data:
             airlineSet.append(airLine(row))
+        form_airportInfoDetail(airlineSet)
         return head, airlineSet
 
 
@@ -65,4 +85,5 @@ if __name__ == '__main__':
             airlineSet.append(airLine(row))
         print(airlineSet[1].LineDate.date())
         print(airlineSet[0].LineIF)
+        form_airportInfoDetail(airlineSet)
 

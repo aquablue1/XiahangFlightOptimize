@@ -76,6 +76,14 @@ def generate_indirectInfluenced_airline(directInfluenced_airline_set, airline_st
                     mid_reset += 1
                     indirectInfluenced_airline_set.append(lineset[index])
             while True:
+                if lineset[start].LineTypeDetail[0] == 0:
+                    break
+                else:
+                    start = start - 1
+                    lineset[start].LineIsInfluenced = 2
+                    airline_string_dict[planeID].planeInfluencedRange[0] = start
+                    indirectInfluenced_airline_set.append(lineset[start])
+            while True:
                 if airline_string_dict[planeID].planeInfluencedRange[1] >= len(lineset)-1:
                     break
                 if D.flight_timecost(D.planeID_totype(lineset[start].LinePlaneID),
@@ -110,21 +118,29 @@ if __name__ == '__main__':
 
     print(len(indirectInfluenced_airline_set))
 
-    """    
+
     for planeid in airline_string_dict.keys():
         print(planeid, end=" : ")
         for line in airline_string_dict[planeid].planeFlightList:
             print(line.LineIsInfluenced, end=" -> ")
         print("")
-    """
 
+    cow_count = 9001
     for plane in airline_string_dict.keys():
-        cow_count = 9001
         lineset = airline_string_dict[plane].planeFlightList
         with open(cpara.PATH_OUTPUT, 'a', newline='') as f:
             f_csv = csv.writer(f)
             for line in lineset:
-                if line.LineIsInfluenced == 0:
+                if line.LineID==1453:
+                    print("meet line id 1453")
+                    row = [line.LineID,
+                           line.LineDepartureAirport,
+                           line.LineLandAirport,
+                           line.LineFlyPeriod.start.strftime(cpara.OUTPUT_DATETIME_FORM),
+                           line.LineFlyPeriod.end.strftime(cpara.OUTPUT_DATETIME_FORM),
+                           line.LinePlaneID,
+                           0, 0, 0]
+                elif line.LineIsInfluenced == 0:
                     row = [line.LineID,
                            line.LineDepartureAirport,
                            line.LineLandAirport,
@@ -143,6 +159,8 @@ if __name__ == '__main__':
                 f_csv.writerow(row)
 
             if airline_string_dict[plane].planeInfluencedRange is not None:
+                if plane == "138":
+                    continue
                 start = airline_string_dict[plane].planeInfluencedRange[0]
                 end = airline_string_dict[plane].planeInfluencedRange[1]
                 if lineset[start].LineDepartureAirport != lineset[end].LineLandAirport:
