@@ -29,12 +29,21 @@ def generate_airline_string(airline_set):
 
 def generate_directInfluenced_airline(airline_set, accident_set):
     def is_influenced(airline, accident_set):
+        if (airline.LineDepartureAirport in [typhoon.TyphoonAirportID for typhoon in accident_set] and
+                accident_set[0].TyphoonForbiddenDeparture.ForbiddenRuleTimePeriod.is_time_include(airline.LineFlyPeriod.start)) \
+            or (airline.LineLandAirport in [typhoon.TyphoonAirportID for typhoon in accident_set] and
+                    accident_set[0].TyphoonForbiddenLand.ForbiddenRuleTimePeriod.is_time_include(airline.LineFlyPeriod.end)):
+            return True
+        return False
+
+        """        
         if timePeriod.is_time_intersect(airline.LineFlyPeriod,
                                         accident_set[0].TyphoonForbiddenLand.ForbiddenRuleTimePeriod) \
             and (airline.LineDepartureAirport in [typhoon.TyphoonAirportID for typhoon in accident_set]
                      or airline.LineLandAirport in [typhoon.TyphoonAirportID for typhoon in accident_set]):
             return True
         return False
+        """
 
     influenced_airline_set = []
     influenced_plane_set = []
@@ -75,7 +84,7 @@ def generate_indirectInfluenced_airline(directInfluenced_airline_set, airline_st
                     lineset[index].LineIsInfluenced = 2
                     mid_reset += 1
                     indirectInfluenced_airline_set.append(lineset[index])
-            while True:
+            while True:  # find the first local airport ahead
                 if lineset[start].LineTypeDetail[0] == 0:
                     break
                 else:
@@ -83,17 +92,19 @@ def generate_indirectInfluenced_airline(directInfluenced_airline_set, airline_st
                     lineset[start].LineIsInfluenced = 2
                     airline_string_dict[planeID].planeInfluencedRange[0] = start
                     indirectInfluenced_airline_set.append(lineset[start])
-            while True:
+            while True:  # find the first possible local airport after influence
                 if airline_string_dict[planeID].planeInfluencedRange[1] >= len(lineset)-1:
+                    break
+                if lineset[start].LineDepartureAirport == lineset[end].LineLandAirport:
                     break
                 if D.flight_timecost(D.planeID_totype(lineset[start].LinePlaneID),
                                      lineset[start].LineDepartureAirport,
-                                     lineset[end].LineLandAirport) is not False:
+                                     lineset[end].LineLandAirport) is not False and lineset[end].LineLandAirport not in ["49","50","61"]:
                     # print(D.planeID_totype(lineset[start].LinePlaneID), lineset[start].LineDepartureAirport, lineset[end].LineLandAirport)
                     break
                 end += 1
                 airline_string_dict[planeID].planeInfluencedRange[1] = end
-                lineset[end].LineIsInfluenced = 2
+                lineset[end].LineIsInfluenced = 3
                 end_append += 1
                 indirectInfluenced_airline_set.append(lineset[end])
     # print(mid_reset, end_append)
@@ -104,21 +115,7 @@ def generate_influenced_airline_string(airline_string):
     if airline_string.planeFlightList != [] and airline_string.planeInfluencedRange is not None:
         return airline_string.planeFlightList[airline_string.planeInfluencedRange[0]: airline_string.planeInfluencedRange[1]+1]
 
-
-if __name__ == '__main__':
-    airline_head, airline_set = generate_airline()
-    typhoon_head, typhoon_set = generate_accident()
-
-    airline_string_dict = generate_airline_string(airline_set)
-
-
-    directInfluenced_airline_set, influenced_plane_set = generate_directInfluenced_airline(airline_set, typhoon_set)
-
-    indirectInfluenced_airline_set = generate_indirectInfluenced_airline(directInfluenced_airline_set, airline_string_dict)
-
-    print(len(indirectInfluenced_airline_set))
-
-
+def write_into_file(airline_string_dict,):
     for planeid in airline_string_dict.keys():
         print(planeid, end=" : ")
         for line in airline_string_dict[planeid].planeFlightList:
@@ -181,4 +178,43 @@ if __name__ == '__main__':
                     cow_count += 1
                     f_csv.writerow(row)
 
+if __name__ == '__main__':
+    airline_head, airline_set = generate_airline()
+    typhoon_head, typhoon_set = generate_accident()
 
+    airline_string_dict = generate_airline_string(airline_set)
+
+
+    directInfluenced_airline_set, influenced_plane_set = generate_directInfluenced_airline(airline_set, typhoon_set)
+
+    indirectInfluenced_airline_set = generate_indirectInfluenced_airline(directInfluenced_airline_set, airline_string_dict)
+
+    print(len(indirectInfluenced_airline_set))
+
+    warning_count = 0
+
+    for planeid in airline_string_dict.keys():
+        print(planeid, end=" : ")
+        for line in airline_string_dict[planeid].planeFlightList:
+            print(line.LineIsInfluenced, end=" -> ")
+        print("")
+
+    illegal_list = []
+    for plane in airline_string_dict.keys():
+        lineset = airline_string_dict[plane].planeFlightList
+        if airline_string_dict[plane].planeInfluencedRange is not None:
+            start, end = airline_string_dict[plane].planeInfluencedRange
+            print("==========")
+            print(lineset[start].LineDepartureAirport, lineset[start].LineLandAirport)
+            print(lineset[start-1].LineFlyPeriod)
+            print(lineset[end].LineDepartureAirport, lineset[end].LineLandAirport)
+            if lineset[end].LineLandAirport in ["49", "61", "50"]:
+                print(lineset[start].LineFlyPeriod)
+                print("Warning!!")
+                warning_count += 1
+            if len(lineset)-1 == end:
+                print("start or end changed, illegal")
+                print("------------------------------------------------>",plane)
+                illegal_list.append(plane)
+    print("warning count: ", warning_count)
+    print("illegal planes: ", illegal_list)

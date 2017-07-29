@@ -20,6 +20,12 @@ class timePeriod:
         else:
             return True
 
+    def is_time_include(self, timestamp):
+        if timestamp > self.start and timestamp < self.end:
+            return True
+        else:
+            return False
+
     def move_ahead(self, time_gap):
         """
         positive time_gap value means move time forword
