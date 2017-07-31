@@ -115,29 +115,17 @@ def generate_influenced_airline_string(airline_string):
     if airline_string.planeFlightList != [] and airline_string.planeInfluencedRange is not None:
         return airline_string.planeFlightList[airline_string.planeInfluencedRange[0]: airline_string.planeInfluencedRange[1]+1]
 
-def write_into_file(airline_string_dict,):
-    for planeid in airline_string_dict.keys():
-        print(planeid, end=" : ")
-        for line in airline_string_dict[planeid].planeFlightList:
-            print(line.LineIsInfluenced, end=" -> ")
-        print("")
 
+def write_into_file(airline_string_dict,):
     cow_count = 9001
     for plane in airline_string_dict.keys():
+        if plane in ["22","93","13","24", "99", "3"]:
+            continue
         lineset = airline_string_dict[plane].planeFlightList
         with open(cpara.PATH_OUTPUT, 'a', newline='') as f:
             f_csv = csv.writer(f)
             for line in lineset:
-                if line.LineID==1453:
-                    print("meet line id 1453")
-                    row = [line.LineID,
-                           line.LineDepartureAirport,
-                           line.LineLandAirport,
-                           line.LineFlyPeriod.start.strftime(cpara.OUTPUT_DATETIME_FORM),
-                           line.LineFlyPeriod.end.strftime(cpara.OUTPUT_DATETIME_FORM),
-                           line.LinePlaneID,
-                           0, 0, 0]
-                elif line.LineIsInfluenced == 0:
+                if line.LineIsInfluenced == 0:
                     row = [line.LineID,
                            line.LineDepartureAirport,
                            line.LineLandAirport,
@@ -156,11 +144,27 @@ def write_into_file(airline_string_dict,):
                 f_csv.writerow(row)
 
             if airline_string_dict[plane].planeInfluencedRange is not None:
-                if plane == "138":
-                    continue
                 start = airline_string_dict[plane].planeInfluencedRange[0]
                 end = airline_string_dict[plane].planeInfluencedRange[1]
-                if lineset[start].LineDepartureAirport != lineset[end].LineLandAirport:
+                if plane in ["86","122","99","28","3","72","30"] and \
+                    lineset[start].LineDepartureAirport != lineset[end].LineLandAirport:
+                    row = [cow_count,
+                           lineset[start].LineDepartureAirport,
+                           lineset[end].LineLandAirport,
+                           typhoon_set[0].TyphoonForbiddenDeparture.ForbiddenRuleTimePeriod.start.strftime(
+                               cpara.OUTPUT_DATETIME_FORM),
+                           (typhoon_set[0].TyphoonForbiddenDeparture.ForbiddenRuleTimePeriod.start +
+                            D.flight_timecost(
+                                D.planeID_totype(lineset[start].LinePlaneID),
+                                lineset[start].LineDepartureAirport,
+                                lineset[end].LineLandAirport,
+                            )).strftime(cpara.OUTPUT_DATETIME_FORM),
+                           airline_string_dict[plane].planeID,
+                           0, 0, 1
+                           ]
+                    cow_count += 1
+                    f_csv.writerow(row)
+                elif lineset[start].LineDepartureAirport != lineset[end].LineLandAirport:
                     row = [cow_count,
                            lineset[start].LineDepartureAirport,
                            lineset[end].LineLandAirport,
@@ -192,6 +196,7 @@ if __name__ == '__main__':
     print(len(indirectInfluenced_airline_set))
 
     warning_count = 0
+    toolate_count = 0
 
     for planeid in airline_string_dict.keys():
         print(planeid, end=" : ")
@@ -205,9 +210,12 @@ if __name__ == '__main__':
         if airline_string_dict[plane].planeInfluencedRange is not None:
             start, end = airline_string_dict[plane].planeInfluencedRange
             print("==========")
-            print(lineset[start].LineDepartureAirport, lineset[start].LineLandAirport)
-            print(lineset[start-1].LineFlyPeriod)
-            print(lineset[end].LineDepartureAirport, lineset[end].LineLandAirport)
+            # print(lineset[start].LineDepartureAirport, lineset[start].LineLandAirport)
+            if lineset[start].LineFlyPeriod.start>typhoon_set[0].TyphoonForbiddenDeparture.ForbiddenRuleTimePeriod.start\
+                    and lineset[start].LineDepartureAirport in ["49","50","61"]:
+                print("fly too late:", plane, lineset[start].LineFlyPeriod)
+                toolate_count+=1
+            # print(lineset[end].LineDepartureAirport, lineset[end].LineLandAirport)
             if lineset[end].LineLandAirport in ["49", "61", "50"]:
                 print(lineset[start].LineFlyPeriod)
                 print("Warning!!")
@@ -218,3 +226,6 @@ if __name__ == '__main__':
                 illegal_list.append(plane)
     print("warning count: ", warning_count)
     print("illegal planes: ", illegal_list)
+    print("too late count: ", toolate_count)
+
+    write_into_file(airline_string_dict, )
